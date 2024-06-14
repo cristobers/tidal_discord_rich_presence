@@ -1,0 +1,21 @@
+[package]
+name = "tidal-richpresence"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+tokio = { version = "1", features = ["macros"] }
+discord-sdk = "0.3.6"
+
+
+[dependencies.windows-sys]
+version = "0.52"
+features = [
+    "Win32_Foundation",
+    "Win32_Security",
+    "Win32_System_Threading",
+    "Win32_UI_WindowsAndMessaging",
+]
