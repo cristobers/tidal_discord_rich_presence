@@ -1,2 +1,8 @@
-# tidal_rich_presence
-Tidal rich presence for Discord
+# Tidal Rich Presence for Discord
+
+Allows TIDAL users to share what they are listening to with Discord.
+
+## Setup
+
+1. Join https://discord.com/oauth2/authorize?client_id=1242553912322560122
+2. Run `tidal-richpresence.exe` which will sit in the background and tell Discord what you're listening to.
