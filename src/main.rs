@@ -1,28 +1,24 @@
-#![windows_subsystem = "windows"]
+// #![windows_subsystem = "windows"]
 mod tidal;
 mod discord;
+
+use std::fs;
 use discord_sdk as ds;
 use windows_sys::Win32::Foundation::HWND;
-use std::{thread, time};
-
-fn activity_assets(big_img: &str, b_txt: &str, small_img: &str, s_txt: &str) -> ds::activity::Assets {
-    ds::activity::Assets::default()
-        .large(
-            big_img.to_owned(),
-            Some(b_txt).to_owned()
-        )
-        .small(
-            small_img.to_owned(),
-            Some(s_txt).to_owned()
-        )
-}
+use std::{thread, time, env};
+use serde::{Serialize, Deserialize};
 
 #[tokio::main]
 async fn main() {
-    let mut large_img; 
-    const PLAYING_IMG: &str = "https://cdn.discordapp.com/app-assets/1242553912322560122/1243945778225877043.png";
-    const PAUSED_IMG: &str = "https://cdn.discordapp.com/app-assets/1242553912322560122/1243947849834823711.png";
+    // let config: Config = read_from_file("tidal_richpresence_config.json");
+    let args: Vec<String> = env::args()
+        .collect::<Vec<String>>();
+    let config: Config = read_from_file(&args[1]);
+    let playing_img: &str = &config.playing_img;
+    let paused_img : &str = &config.paused_img;
+    let discord_delay: u64 = config.discord_delay;
 
+    let mut large_img; 
     let mut last_song = String::from("Empty");
 
     let mut parsed: tidal::Title = tidal::Title {
@@ -43,8 +39,8 @@ async fn main() {
 
                     if we_are_paused(&curr_song) {
                         if we_have_previously_played_a_song(&parsed.song) {
-                            large_img = "https://media1.tenor.com/m/t4j2MWEZgSEAAAAd/kitten.gif";
-                            // Take the previously played song, give it the small paused img.
+                            large_img = &config.large_paused_img;
+                            // Take the prev played song, give it the paused icon.
                             let _ = client.discord.update_activity(
                                 ds::activity::ActivityBuilder::default()
                                     .details(parsed.song.to_owned())
@@ -53,21 +49,23 @@ async fn main() {
                                         activity_assets(
                                             large_img,
                                             "sleeping bc no music",
-                                            PAUSED_IMG,
+                                            paused_img,
                                             "Paused"
                                         )
                                     )
                             ).await;
                         } else {
-                            // If we are paused, and we haven't previously played a song,
+                            // If we are paused, 
+                            // and we haven't previously played a song,
                             // do nothing, wait a little bit, and try again.
                             thread::sleep(time::Duration::from_secs(3));
                             continue;
                         }
                     } else {
-                        // If we aren't paused, parse the title from TIDAL and update Discord.
+                        // If we aren't paused, parse the title from TIDAL and update 
+                        // Discord.
                         parsed = parse_song(curr_song);
-                        large_img = "https://media.tenor.com/KC4-Zja4V7gAAAAi/cat-jam.gif";
+                        large_img = &config.large_playing_img;
                         let _ = client.discord.update_activity(
                             ds::activity::ActivityBuilder::default()
                                 .details(parsed.song.to_owned())
@@ -76,22 +74,39 @@ async fn main() {
                                     activity_assets(
                                         large_img,
                                         "oooh yeah music time",
-                                        PLAYING_IMG,
+                                        playing_img,
                                         "Playing"
                                     )
                                 )
                         ).await;
                     }
                 }
-                thread::sleep(time::Duration::from_secs(4));
+                thread::sleep(time::Duration::from_secs(discord_delay));
             }
             // Otherwise TIDAL may have been previously closed, try and refind TIDAL.
             Err(_) => {
-                tidal_hwnd = try_for_hwnd();     
+                tidal_hwnd = try_for_hwnd();
             }
         }
-
     }
+}
+
+#[derive(Serialize, Deserialize)]
+struct Config {
+    playing_img: String,
+    paused_img : String,
+    large_playing_img: String,
+    large_paused_img : String,
+    discord_delay: u64
+}
+
+fn read_from_file(filepath: &str) -> Config {
+    let file = fs::read_to_string(filepath)
+        .expect("Unable to open file at {filepath}");
+    
+    let config: Config = serde_json::from_str(&file)
+        .expect("Failed to parse config.");
+    config
 }
 
 fn try_for_hwnd() -> HWND {
@@ -124,4 +139,17 @@ fn we_are_paused(curr_song: &str) -> bool {
 
 fn we_have_previously_played_a_song(prev_song: &str) -> bool {
     prev_song != "TIDAL" && prev_song != "None"
+}
+
+fn activity_assets(big_img: &str, b_txt: &str, small_img: &str, s_txt: &str) 
+    -> ds::activity::Assets {
+    ds::activity::Assets::default()
+        .large(
+            big_img.to_owned(),
+            Some(b_txt).to_owned()
+        )
+        .small(
+            small_img.to_owned(),
+            Some(s_txt).to_owned()
+        )
 }
