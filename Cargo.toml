@@ -1,5 +1,5 @@
 [package]
-name = "tidal-richpresence"
+name = "tidal_discord_rich_presence"
 version = "0.1.0"
 edition = "2021"
 
