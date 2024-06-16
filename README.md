@@ -11,3 +11,12 @@ Allows TIDAL users to share what they are listening to with Discord.
 5. If TIDAL is currently playing music, pause it and wait for ~4 seconds, TIDAL should 
 then be found by the executable and should start sending rich presence information to 
 Discord.
+
+### Running on startup
+
+1. Do steps 1-3 from the section above
+2. Create a shortcut for `tidal_richpresence.exe`, place this within the Windows 
+Start-up folder
+3. Edit the shortcuts target (Right click, Properties) to look something like this:
+<PATH WHERE EXE LIVES> <PATH TO tidal_richpresence.exe>
+4. It's probably good to also have Discord auto launch

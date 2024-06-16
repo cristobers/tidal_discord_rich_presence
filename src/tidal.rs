@@ -9,6 +9,7 @@ pub struct Title {
 }
 
 pub fn get_tidal_hwnd() -> Result<HWND, String> {
+    // Tries to get the `HWND` for TIDAL.
     unsafe {
         let res: HWND = FindWindowA(std::ptr::null(), s!("TIDAL"));
         match res {
@@ -19,6 +20,7 @@ pub fn get_tidal_hwnd() -> Result<HWND, String> {
 }
 
 pub fn check_title(w: HWND) -> Result<String, String> {
+    // Tries to find the window title "TIDAL" for a given HWND.
     unsafe {
         let mut text: [u16; 512] = [0; 512];
         let res = GetWindowTextW(w, text.as_mut_ptr(), text.len() as i32);
