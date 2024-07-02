@@ -10,12 +10,10 @@ use serde::{Serialize, Deserialize};
 
 #[tokio::main]
 async fn main() {
-    // let config: Config = read_from_file("tidal_richpresence_config.json");
     let args: Vec<String> = env::args()
         .collect::<Vec<String>>();
     let config: Config = read_from_file(&args[1]);
     let playing_img: &str = &config.playing_img;
-    let paused_img : &str = &config.paused_img;
     let discord_delay: u64 = config.discord_delay;
 
     let mut large_img; 
@@ -39,21 +37,7 @@ async fn main() {
 
                     if we_are_paused(&curr_song) {
                         if we_have_previously_played_a_song(&parsed.song) {
-                            large_img = &config.large_paused_img;
-                            // Take the prev played song, give it the paused icon.
-                            let _ = client.discord.update_activity(
-                                ds::activity::ActivityBuilder::default()
-                                    .details(parsed.song.to_owned())
-                                    .state(parsed.artist.to_owned())
-                                    .assets(
-                                        activity_assets(
-                                            large_img,
-                                            "sleeping bc no music",
-                                            paused_img,
-                                            "Paused"
-                                        )
-                                    )
-                            ).await;
+                            let _ = client.discord.clear_activity().await;
                         } else {
                             // If we are paused, 
                             // and we haven't previously played a song,
