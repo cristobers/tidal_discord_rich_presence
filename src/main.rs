@@ -13,7 +13,6 @@ async fn main() {
     let args: Vec<String> = env::args()
         .collect::<Vec<String>>();
     let config: Config = read_from_file(&args[1]);
-    let playing_img: &str = &config.playing_img;
     let discord_delay: u64 = config.discord_delay;
 
     let mut large_img; 
@@ -49,16 +48,21 @@ async fn main() {
                         // If we aren't paused, parse the title from TIDAL and update 
                         // Discord.
                         parsed = parse_song(curr_song);
-                        large_img = &config.large_playing_img;
+                        let temp = parsed.clone();
+                        let get_song = tidal::get_song_image(temp, &config.on_fail)
+                            .await;
+                        large_img = get_song;
+                        // if we have changed song, make a net req to tidal for the img
+                        // large_img = &config.large_playing_img;
                         let _ = client.discord.update_activity(
                             ds::activity::ActivityBuilder::default()
                                 .details(parsed.song.to_owned())
                                 .state(parsed.artist.to_owned())
                                 .assets(
                                     activity_assets(
-                                        large_img,
+                                        &large_img,
                                         "oooh yeah music time",
-                                        playing_img,
+                                        &config.small_img,
                                         "Playing"
                                     )
                                 )
@@ -78,9 +82,8 @@ async fn main() {
 #[derive(Serialize, Deserialize)]
 struct Config {
     playing_img: String,
-    paused_img : String,
-    large_playing_img: String,
-    large_paused_img : String,
+    on_fail: String,
+    small_img: String,
     discord_delay: u64
 }
 
