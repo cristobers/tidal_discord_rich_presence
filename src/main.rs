@@ -53,7 +53,6 @@ async fn main() {
                             .await;
                         large_img = get_song;
                         // if we have changed song, make a net req to tidal for the img
-                        // large_img = &config.large_playing_img;
                         let _ = client.discord.update_activity(
                             ds::activity::ActivityBuilder::default()
                                 .details(parsed.song.to_owned())
