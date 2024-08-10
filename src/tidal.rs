@@ -27,10 +27,11 @@ fn make_tidal_api_url(curr_song: Title) -> String {
     final_parsed.push('-');
     final_parsed.push_str(&parsed_artist);
     // TODO: try and determine the country code of the user for better results
-    format!(
+    let formatted = format!(
         "https://api.tidal.com/v1/search?query={}&limit=50&offset=0&types=TRACKS&countryCode=US", 
         final_parsed
-    )
+    );
+    formatted
 }
 
 pub async fn get_song_image(curr_song: Title, if_fails: &str) -> String {
@@ -53,7 +54,7 @@ pub async fn get_song_image(curr_song: Title, if_fails: &str) -> String {
             base_url
         }
         None => {
-            dbg!("COVER IS NONE!!!");
+            dbg!("Couldn't find album art from request.");
             if_fails.to_owned()
         }
     }
