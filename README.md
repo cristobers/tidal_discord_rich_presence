@@ -2,6 +2,8 @@
 
 Allows TIDAL users to share what they are listening to with Discord.
 
+![image](https://github.com/user-attachments/assets/77fafb97-d6cc-4840-98a5-7aee5538f7ce)
+
 ## Setup
 
 1. `cargo build --release` to build `tidal-richpresence.exe`
