@@ -2,7 +2,7 @@
 
 Allows TIDAL users to share what they are listening to with Discord.
 
-![image](https://github.com/user-attachments/assets/77fafb97-d6cc-4840-98a5-7aee5538f7ce)
+![Discord_zFkzDNJInY](https://github.com/user-attachments/assets/eda98959-98c6-4c0d-a961-ac72131584e7)
 
 ## Setup
 
