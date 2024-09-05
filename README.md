@@ -4,6 +4,8 @@ Allows TIDAL users to share what they are listening to with Discord.
 
 ![Discord_zFkzDNJInY](https://github.com/user-attachments/assets/eda98959-98c6-4c0d-a961-ac72131584e7)
 
+Note: this is mostly just for me and may (and probably will) break and not be fixed for long periods of time. If you're going to use this, make sure you're comfortable with Rust.
+
 ## Setup
 
 1. `cargo build --release` to build `tidal-richpresence.exe`
